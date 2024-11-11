@@ -25,7 +25,7 @@ Source = "https://github.com/zkurtz/debtcloset"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-dummio = "^0.0.1"
+dummio = "^0.0.2"
 
 [tool.pytest.ini_options]
 testpaths = ["tests",]

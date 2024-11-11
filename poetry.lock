@@ -399,17 +399,14 @@ files = [
 
 [[package]]
 name = "dummio"
-version = "0.0.1"
+version = "0.0.2"
 description = "Easiest-possible IO for basic file types."
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    {file = "dummio-0.0.1-py3-none-any.whl", hash = "sha256:fd239e25f701b2c971398d942b6f1633a36b8bf05fb3af65973f936c48ce2f05"},
-    {file = "dummio-0.0.1.tar.gz", hash = "sha256:6573ec167e44a6c6643c5ae6da4ef8c2e58a25fac7a7bdd5b6b3241987a54684"},
+    {file = "dummio-0.0.2-py3-none-any.whl", hash = "sha256:f7c122a4d7639e9e3d092c41d8e3c668c67852e4255d58a008dbf1e483246e4a"},
+    {file = "dummio-0.0.2.tar.gz", hash = "sha256:dbeb8f462364afe58e544f564eb850ee85ee887c96376d753868de4ab5029f29"},
 ]
-
-[package.dependencies]
-twine = ">=5.1.1,<6.0.0"
 
 [[package]]
 name = "exceptiongroup"
@@ -1177,4 +1174,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "fd1d1677580142dd6de9e1ed9fd836131ef506c00db99c29f9b335f59772a0d1"
+content-hash = "7b4448dcb6b29d6fcd085caf8e994c28d5647051143cf048502fac77d58e436b"
