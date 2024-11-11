@@ -1,52 +1,16 @@
 """Main tests of dummio."""
 
-from pathlib import Path
-from types import ModuleType
-from typing import Any
-
-import dummio
+from debtcloset import REPO_DIR
+from debtcloset.pyright import toml
 
 
-def dictionary() -> dict[str, int]:
-    return {"a": 1, "b": 2}
+def test_exclude() -> None:
+    """Verify expected behaviour."""
 
-
-def _assert_cycle(*, data: Any, path: Path, module: ModuleType) -> None:
-    """Apply the module save/load cycle on the data and assert that the reloaded data matches the input data."""
-
-    module.save(data, filepath=path)
-    loaded_data = module.load(path)
-    assert data == loaded_data
-
-    # The same cycle should work in case path is specified as a str instead of a pathlib.Path
-    str_path = str(path)
-    module.save(data, filepath=str_path)
-    loaded_data = module.load(str_path)
-    assert data == loaded_data
-
-
-def test_json(tmp_path: Path) -> None:
-    """Test the packio package."""
-    _assert_cycle(
-        path=tmp_path / "data.json",
-        data=dictionary(),
-        module=dummio.json,
-    )
-
-
-def test_text(tmp_path: Path) -> None:
-    """Test the packio package."""
-    _assert_cycle(
-        path=tmp_path / "data.json",
-        data="Hello world!",
-        module=dummio.text,
-    )
-
-
-def test_yaml(tmp_path: Path) -> None:
-    """Test the packio package."""
-    _assert_cycle(
-        path=tmp_path / "data.json",
-        data=dictionary(),
-        module=dummio.yaml,
-    )
+    # This repo runs pyright as part of CI, so the pyproject.toml should not have a pyright exclude list, and running
+    # exclude should have no effect:
+    pyproject_file = REPO_DIR / "pyproject.toml"
+    original_pyproject = pyproject_file.read_text()
+    toml.exclude(repo_root=str(REPO_DIR))
+    final_pyproject = pyproject_file.read_text()
+    assert original_pyproject == final_pyproject
