@@ -8,6 +8,8 @@ from pathlib import Path
 
 import dummio
 
+from debtcloset.util.listfmt import align
+
 ERROR = "error"
 FILENAME = "filename"
 EXCLUDE = "extend-exclude"
@@ -102,8 +104,7 @@ class Pyright:
     def add_exclusions(self, files: list[str]) -> str:
         """Remove any pre-existing exclusions and append new ones."""
         content = self.remove_exclusions()
-        exclusions = ", ".join([f'    "{file}"' for file in files]) + ","
-        excl_str = f"{EXCLUDE} = [\n{exclusions}\n]\n"
+        excl_str = f"{EXCLUDE} = [\n{align(files)}\n]\n"
         if not content.endswith("\n"):
             excl_str = "\n" + excl_str
         return content + excl_str
@@ -120,7 +121,7 @@ def run_ruff(repo_root: str) -> list[str]:
         return []
     fullpaths = set([item[FILENAME] for item in output])
     len_prefix = len(repo_root) + 1
-    return [path[len_prefix:] for path in fullpaths]
+    return sorted([path[len_prefix:] for path in fullpaths])
 
 
 def remove_exclusions(repo_root: str = os.getcwd()) -> None:
