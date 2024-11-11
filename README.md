@@ -17,6 +17,15 @@ from debtcloset.pyright.toml import exclude
 exclude()
 ```
 
+### ruff with pyproject.toml
+
+To update your pyproject.toml's pyright configuration to exclude all files that currently fail ruff checks, simply do
+
+```
+from debtcloset.ruff.toml import exclude
+exclude()
+```
+
 ## Development
 
 Install poetry:
