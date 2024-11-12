@@ -104,23 +104,12 @@ class Pyright:
     def add_exclusions(self, files: list[str]) -> str:
         """Remove any pre-existing exclusions and append new ones."""
         content = self.remove_exclusions()
+        if not files:
+            return content
         excl_str = f"{EXCLUDE} = [\n{align(files)}\n]\n"
         if not content.endswith("\n"):
             excl_str = "\n" + excl_str
         return content + excl_str
-
-
-def run_pyright(repo_root: str) -> list[str]:
-    """Runs pyright and returns a list of file paths with errors."""
-    with tempfile.NamedTemporaryFile(mode="w+", delete=False) as tmpfile:
-        cmd = [PYRIGHT, "--outputjson"]
-        with open(tmpfile.name, "w") as file:
-            subprocess.run(cmd, stdout=file, cwd=repo_root)
-        output = dummio.json.load(tmpfile.name)
-    diagnostics = output["generalDiagnostics"]
-    fullpaths = set([item[FILE] for item in diagnostics if item[SEVERITY] == ERROR])
-    len_prefix = len(repo_root) + 1
-    return sorted([path[len_prefix:] for path in fullpaths])
 
 
 def remove_exclusions(repo_root: str = os.getcwd()) -> None:
@@ -133,7 +122,7 @@ def remove_exclusions(repo_root: str = os.getcwd()) -> None:
     new_pyproject.save(filepath=pyproject_toml_path)
 
 
-def add_exclusions(repo_root: str = os.getcwd(), *, files: list[str]) -> None:
+def set_exclusions(repo_root: str = os.getcwd(), *, files: list[str]) -> None:
     """Add exclusions to the pyproject.toml file."""
     pyproject_toml_path = Path(repo_root) / PYPROJECT_FILE
     pyproject = Pyproject.from_file(pyproject_toml_path)
@@ -143,12 +132,27 @@ def add_exclusions(repo_root: str = os.getcwd(), *, files: list[str]) -> None:
     new_pyproject.save(filepath=pyproject_toml_path)
 
 
-def exclude(repo_root: str = os.getcwd()) -> None:
+def run_pyright(repo_root: str, required_exclusions: list[str]) -> list[str]:
+    """Runs pyright and returns a list of file paths with errors."""
+    set_exclusions(repo_root, files=required_exclusions)
+    with tempfile.NamedTemporaryFile(mode="w+", delete=False) as tmpfile:
+        cmd = [PYRIGHT, "--outputjson"]
+        with open(tmpfile.name, "w") as file:
+            subprocess.run(cmd, stdout=file, cwd=repo_root)
+        output = dummio.json.load(tmpfile.name)
+    remove_exclusions(repo_root)
+    diagnostics = output["generalDiagnostics"]
+    fullpaths = set([item[FILE] for item in diagnostics if item[SEVERITY] == ERROR])
+    len_prefix = len(repo_root) + 1
+    return sorted([path[len_prefix:] for path in fullpaths])
+
+
+def exclude(repo_root: str = os.getcwd(), required_exclusions: list[str] | None = None) -> None:
     """Reconfigure pyproject.toml to exclude all files where pyright throws any errors."""
     pyproject_toml_path = Path(repo_root) / PYPROJECT_FILE
     if not pyproject_toml_path.exists():
         raise FileNotFoundError(f"Could not find {pyproject_toml_path}")
     remove_exclusions(repo_root)
-    exclude_files = run_pyright(repo_root)
-    if exclude_files:
-        add_exclusions(repo_root, files=exclude_files)
+    required_exclusions = required_exclusions or []
+    exclude_files = run_pyright(repo_root, required_exclusions=required_exclusions)
+    set_exclusions(repo_root, files=required_exclusions + exclude_files)

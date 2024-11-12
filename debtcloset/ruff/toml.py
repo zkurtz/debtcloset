@@ -104,6 +104,8 @@ class Pyright:
     def add_exclusions(self, files: list[str]) -> str:
         """Remove any pre-existing exclusions and append new ones."""
         content = self.remove_exclusions()
+        if not files:
+            return content
         excl_str = f"{EXCLUDE} = [\n{align(files)}\n]\n"
         if not content.endswith("\n"):
             excl_str = "\n" + excl_str
