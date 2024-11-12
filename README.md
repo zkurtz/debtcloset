@@ -45,3 +45,8 @@ Install this package and its dependencies in your virtual env:
 ```
 poetry install --with extras --with dev
 ```
+
+Set up git hooks:
+```
+pre-commit install
+```

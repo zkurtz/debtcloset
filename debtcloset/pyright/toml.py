@@ -7,8 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import dummio
-
-from debtcloset.util.listfmt import align
+from listwrap import align
 
 ERROR = "error"
 FILE = "file"

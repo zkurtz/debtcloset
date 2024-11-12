@@ -603,6 +603,17 @@ test = ["pyfakefs", "pytest (>=6,!=8.1.*)"]
 type = ["pygobject-stubs", "pytest-mypy", "shtab", "types-pywin32"]
 
 [[package]]
+name = "listwrap"
+version = "0.0.1"
+description = "Formatting lists of strings."
+optional = false
+python-versions = "<4.0,>=3.10"
+files = [
+    {file = "listwrap-0.0.1-py3-none-any.whl", hash = "sha256:fec714cf627b51103a6f2d0fae076db1cb5773c7c3f1b628840b074095e63311"},
+    {file = "listwrap-0.0.1.tar.gz", hash = "sha256:bff3383e03a3eead20cb21cb899b7cff4ca3bea4240f5d1f884dedf59a75b53e"},
+]
+
+[[package]]
 name = "markdown-it-py"
 version = "3.0.0"
 description = "Python port of markdown-it. Markdown parsing, done right!"
@@ -1174,4 +1185,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "7b4448dcb6b29d6fcd085caf8e994c28d5647051143cf048502fac77d58e436b"
+content-hash = "afb0296b6e1f9cabacf8fbb387b8a37c56b1730c2986c39a1c909441c75270b0"

@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "debtcloset"
-version = "0.0.4"
+version = "0.0.5"
 description = "Creation and maintenance of `exclude` file lists for common code quality tools."
 authors = [ "Zach Kurtz <zkurtz@gmail.com>",]
 readme = "README.md"
@@ -26,6 +26,7 @@ Source = "https://github.com/zkurtz/debtcloset"
 [tool.poetry.dependencies]
 python = "^3.10"
 dummio = "^0.0.2"
+listwrap = "^0.0.1"
 
 [tool.pytest.ini_options]
 testpaths = ["tests",]
