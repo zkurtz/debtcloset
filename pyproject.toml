@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "debtcloset"
-version = "0.0.3"
+version = "0.0.4"
 description = "Creation and maintenance of `exclude` file lists for common code quality tools."
 authors = [ "Zach Kurtz <zkurtz@gmail.com>",]
 readme = "README.md"

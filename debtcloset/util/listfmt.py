@@ -29,7 +29,7 @@ def align(
         strings = [f'"{string}"' for string in strings]
     fullsep = f"{sep}\n" if vertical else sep
     expression = fullsep.join(strings)
-    if trailsep:
+    if strings and trailsep:
         expression += sep
     if indent:
         expression = textwrap.indent(expression, SPACE * indent)
