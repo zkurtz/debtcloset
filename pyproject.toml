@@ -1,50 +1,34 @@
-[build-system]
-requires = [ "poetry-core>=1.0.0",]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry]
+[project]
 name = "debtcloset"
-version = "0.0.5"
+version = "0.3.0"
 description = "Creation and maintenance of `exclude` file lists for common code quality tools."
-authors = [ "Zach Kurtz <zkurtz@gmail.com>",]
+authors = [{ name = "Zach Kurtz", email = "zkurtz@gmail.com" }]
 readme = "README.md"
-homepage = "https://github.com/zkurtz/debtcloset"
+requires-python = ">=3.10"
+dependencies = [
+    "dummio >=0.2.0",
+    "listwrap >=0.0.2",
+]
+
+[dependency-groups]
+dev = [
+  "pre-commit >=3.8.0",
+  "pyright >=1.1.378",
+  "ruff >=0.7.4",
+  "pytest >=8.3.2",
+]
+
+[tool.uv]
+package = true
 
 [tool.ruff]
-line-length = 120
-
-[tool.ruff.lint]
-select = ["E", "F", "I",]
-ignore = []
-
-[tool.black]
 line-length = 120
 
 [project.urls]
 Source = "https://github.com/zkurtz/debtcloset"
 
-[tool.poetry.dependencies]
-python = "^3.10"
-dummio = "^0.0.2"
-listwrap = "^0.0.1"
-
 [tool.pytest.ini_options]
 testpaths = ["tests",]
 
-[tool.poetry.group.dev.dependencies]
-ruff = "^0.6.3"
-pyright = "^1.1.378"
-pytest = "^8.3.2"
-pre-commit = "^3.8.0"
-black = "^24.8.0"
-build = "^1.2.1"
-twine = "^5.1.1"
-toml = "^0.10.2"
-
-[tool.poetry.group.extras.dependencies]
-pyright = "^1.1.378"
-black = "^24.8.0"
-ruff = "^0.6.3"
-
 [tool.pyright]
-include = ["debtcloset",]
+include = ["debtcloset", "tests"]

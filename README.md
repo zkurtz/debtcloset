@@ -10,7 +10,7 @@ We're [on pypi](https://pypi.org/project/debtcloset/) so you can just `pip insta
 
 ### pyright with pyproject.toml
 
-To update your pyproject.toml's pyright configuration to exclude all files that currently fail pyright checks, simply do
+Update your pyproject.toml's pyright configuration to exclude all files that currently fail pyright checks:
 
 ```
 from debtcloset.pyright.toml import exclude
@@ -19,7 +19,7 @@ exclude()
 
 ### ruff with pyproject.toml
 
-To update your pyproject.toml's pyright configuration to exclude all files that currently fail ruff checks, simply do
+Update your pyproject.toml's pyright configuration to exclude all files that currently fail ruff checks:
 
 ```
 from debtcloset.ruff.toml import exclude
@@ -28,25 +28,11 @@ exclude()
 
 ## Development
 
-Install poetry:
 ```
-curl -sSL https://install.python-poetry.org | python3 -
-```
-
-Install [pyenv and its virtualenv plugin](https://github.com/pyenv/pyenv-virtualenv). Then:
-```
-pyenv install 3.12.2
-pyenv global 3.12.2
-pyenv virtualenv 3.12.2 debtcloset
-pyenv activate debtcloset
-```
-
-Install this package and its dependencies in your virtual env:
-```
-poetry install --with extras --with dev
-```
-
-Set up git hooks:
-```
+git clone git@github.com:zkurtz/debtcloset.git
+cd debtcloset
+pip install uv
+uv sync
+source .venv/bin/activate
 pre-commit install
 ```
