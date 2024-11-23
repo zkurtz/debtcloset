@@ -9,6 +9,7 @@ __pycache__/
 # Build artifacts
 dist/
 build/
+*.egg-info/
 
 # IDE-specific files
 .idea/
