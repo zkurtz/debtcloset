@@ -1,0 +1,33 @@
+name: Test build
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Unit tests with tox
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    steps:
+    - name: Clone repo
+      uses: actions/checkout@v4
+
+    - name: Install libomp
+      if: matrix.os == 'macos-latest'
+      run: brew install libomp
+
+    - name: Install uv and set the python version
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "0.5.11"
+        python-version: 3.13
+
+    - name: Install tox
+      run: uv tool install tox
+
+    - name: Run tests with tox
+      run: tox

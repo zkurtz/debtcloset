@@ -122,7 +122,9 @@ def run_ruff(repo_root: str) -> list[str]:
         return []
     fullpaths = set([item[FILENAME] for item in output])
     len_prefix = len(repo_root) + 1
-    return sorted([path[len_prefix:] for path in fullpaths])
+    relpaths = sorted([path[len_prefix:] for path in fullpaths])
+    # If the paths were generated on windows, we need to convert them to unix-style paths:
+    return [path.replace(os.sep, "/") for path in relpaths]
 
 
 def remove_exclusions(repo_root: str = os.getcwd()) -> None:

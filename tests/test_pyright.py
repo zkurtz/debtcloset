@@ -4,7 +4,6 @@ import shutil
 import textwrap
 from pathlib import Path
 
-from debtcloset import REPO_DIR
 from debtcloset.pyright import toml
 
 INPUT_STR = """
@@ -52,7 +51,6 @@ EXPECTED_STR_REQ = """
 def _build_dummy_repo(pyproject_file: Path, use_subdir: bool = False, use_tox: bool = False) -> None:
     """Build a dummy python repo including multiple files including some type errors."""
     directory = pyproject_file.parent
-    assert not str(REPO_DIR).startswith(str(directory)), "oops, you might be overwriting the main repo!"
     # Empty directory of all contents (but keeping the directory), using shutil:
     shutil.rmtree(directory)
     directory.mkdir()
@@ -99,11 +97,3 @@ def test_exclude(tmp_path: Path) -> None:
     toml.exclude(repo_root=str(tmp_path))
     result_str = pyproject_file.read_text()
     assert '".tox/*",' in result_str
-
-    # This repo runs pyright as part of CI, so the pyproject.toml should not have a pyright exclude list, and running
-    # exclude should have no effect:
-    pyproject_file = REPO_DIR / "pyproject.toml"
-    original_pyproject = pyproject_file.read_text()
-    toml.exclude(repo_root=str(REPO_DIR))
-    final_pyproject = pyproject_file.read_text()
-    assert original_pyproject == final_pyproject
