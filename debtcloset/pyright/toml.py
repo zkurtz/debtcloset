@@ -153,7 +153,9 @@ def identify_failing_modules(repo_root: Path, required_exclusions: list[str]) ->
     diagnostics = output["generalDiagnostics"]
     fullpaths = set([item[FILE] for item in diagnostics if item[SEVERITY] == ERROR])
     len_prefix = len(str(repo_root)) + 1
-    return sorted([path[len_prefix:] for path in fullpaths])
+    relpaths = sorted([path[len_prefix:] for path in fullpaths])
+    # If the paths were generated on windows, we need to convert them to unix-style paths:
+    return [path.replace(os.sep, "/") for path in relpaths]
 
 
 def compile_ignores(repo_root: Path, required_exclusions: list[str] | None = None) -> list[str]:
