@@ -111,9 +111,8 @@ class Pyright:
         return content + excl_str
 
 
-def remove_exclusions(repo_root: str = os.getcwd()) -> None:
+def remove_exclusions(pyproject_toml_path: Path) -> None:
     """Remove any pyright exclusions file from the pyproject.toml file."""
-    pyproject_toml_path = Path(repo_root) / PYPROJECT_FILE
     pyproject = Pyproject.from_file(pyproject_toml_path)
     config = Pyright(pyproject())
     new_config = config.remove_exclusions()
@@ -121,9 +120,8 @@ def remove_exclusions(repo_root: str = os.getcwd()) -> None:
     new_pyproject.save(filepath=pyproject_toml_path)
 
 
-def set_exclusions(repo_root: str = os.getcwd(), *, files: list[str]) -> None:
+def set_exclusions(pyproject_toml_path: Path, *, files: list[str]) -> None:
     """Add exclusions to the pyproject.toml file."""
-    pyproject_toml_path = Path(repo_root) / PYPROJECT_FILE
     pyproject = Pyproject.from_file(pyproject_toml_path)
     config = Pyright(pyproject())
     new_config = config.add_exclusions(files)
@@ -131,27 +129,56 @@ def set_exclusions(repo_root: str = os.getcwd(), *, files: list[str]) -> None:
     new_pyproject.save(filepath=pyproject_toml_path)
 
 
-def run_pyright(repo_root: str, required_exclusions: list[str]) -> list[str]:
-    """Runs pyright and returns a list of file paths with errors."""
-    set_exclusions(repo_root, files=required_exclusions)
+def identify_failing_modules(repo_root: Path, required_exclusions: list[str]) -> list[str]:
+    """Runs pyright and returns a list of file paths with errors.
+
+    Overall approach:
+    1. Update pyproject.toml to exclude the `required_exclusions` paths for pyright.
+    2. Run pyright and compile the list of files with errors.
+    3. Reset pyproject.toml to its original state (without exclusions).
+    4. Return the list of files with errors.
+
+    Args:
+        repo_root: The path to the repository root.
+        required_exclusions: A list of file paths to exclude from the analysis.
+    """
+    pyproject_toml_path = Path(repo_root) / PYPROJECT_FILE
+    set_exclusions(pyproject_toml_path, files=required_exclusions)
     with tempfile.NamedTemporaryFile(mode="w+", delete=False) as tmpfile:
         cmd = [PYRIGHT, "--outputjson"]
         with open(tmpfile.name, "w") as file:
             subprocess.run(cmd, stdout=file, cwd=repo_root)
         output = dummio.json.load(tmpfile.name)
-    remove_exclusions(repo_root)
+    remove_exclusions(pyproject_toml_path)
     diagnostics = output["generalDiagnostics"]
     fullpaths = set([item[FILE] for item in diagnostics if item[SEVERITY] == ERROR])
-    len_prefix = len(repo_root) + 1
+    len_prefix = len(str(repo_root)) + 1
     return sorted([path[len_prefix:] for path in fullpaths])
+
+
+def compile_ignores(repo_root: Path, required_exclusions: list[str] | None = None) -> list[str]:
+    """Compile a list of files/directories that we want pyright to ignore."""
+    default_ignored_directories = [
+        ".venv",
+        ".tox",
+        "docs",
+    ]
+    ignores = []
+    for item in default_ignored_directories:
+        path = repo_root / item
+        if path.is_dir():
+            ignores.append(f"{item}/*")
+    additional_required_ignores = set(required_exclusions or []) - set(ignores)
+    return sorted(ignores + list(additional_required_ignores))
 
 
 def exclude(repo_root: str = os.getcwd(), required_exclusions: list[str] | None = None) -> None:
     """Reconfigure pyproject.toml to exclude all files where pyright throws any errors."""
-    pyproject_toml_path = Path(repo_root) / PYPROJECT_FILE
+    repo_root_path = Path(repo_root)
+    pyproject_toml_path = repo_root_path / PYPROJECT_FILE
     if not pyproject_toml_path.exists():
         raise FileNotFoundError(f"Could not find {pyproject_toml_path}")
-    remove_exclusions(repo_root)
-    required_exclusions = required_exclusions or []
-    exclude_files = run_pyright(repo_root, required_exclusions=required_exclusions)
-    set_exclusions(repo_root, files=required_exclusions + exclude_files)
+    remove_exclusions(pyproject_toml_path)
+    ignores = compile_ignores(repo_root_path, required_exclusions=required_exclusions)
+    failures = identify_failing_modules(repo_root_path, required_exclusions=ignores)
+    set_exclusions(pyproject_toml_path, files=ignores + failures)
