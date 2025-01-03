@@ -1,6 +1,6 @@
 [project]
 name = "debtcloset"
-version = "0.4.0"
+version = "0.4.1"
 description = "Creation and maintenance of `exclude` file lists for common code quality tools."
 authors = [{ name = "Zach Kurtz", email = "zkurtz@gmail.com" }]
 readme = "README.md"

@@ -96,4 +96,5 @@ def test_exclude(tmp_path: Path) -> None:
     _build_dummy_repo(pyproject_file, use_tox=True)
     toml.exclude(repo_root=str(tmp_path))
     result_str = pyproject_file.read_text()
-    assert '".tox/*",' in result_str
+    assert '".tox/*",' in result_str, ".tox should be excluded."
+    assert '"dist/*",' not in result_str, "we exclude only directories that actually exist."
