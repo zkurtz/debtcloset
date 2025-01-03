@@ -18,6 +18,13 @@ TOOL = "tool"
 
 PYPROJECT_FILE = "pyproject.toml"
 HEADER = f"[{TOOL}.{PYRIGHT}]"
+DEFAULT_IGNORED_DIRECTORIES = [
+    ".venv",
+    ".tox",
+    "docs",
+    "dist",
+    "build",
+]
 
 
 @dataclass
@@ -160,13 +167,8 @@ def identify_failing_modules(repo_root: Path, required_exclusions: list[str]) ->
 
 def compile_ignores(repo_root: Path, required_exclusions: list[str] | None = None) -> list[str]:
     """Compile a list of files/directories that we want pyright to ignore."""
-    default_ignored_directories = [
-        ".venv",
-        ".tox",
-        "docs",
-    ]
     ignores = []
-    for item in default_ignored_directories:
+    for item in DEFAULT_IGNORED_DIRECTORIES:
         path = repo_root / item
         if path.is_dir():
             ignores.append(f"{item}/*")
