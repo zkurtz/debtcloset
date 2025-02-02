@@ -148,7 +148,12 @@ def add_exclusions(repo_root: str = os.getcwd(), *, files: list[str]) -> None:
 
 
 def exclude(repo_root: str = os.getcwd()) -> None:
-    """Reconfigure pyproject.toml to exclude all files where ruff throws any errors."""
+    """Configure pyproject.toml to exclude all files where ruff throws any errors.
+
+    Args:
+        repo_root: The path to the repository root. Normally you call this function from the root of the repository, so
+            the default value should work.
+    """
     pyproject_toml_path = Path(repo_root) / PYPROJECT_FILE
     if not pyproject_toml_path.exists():
         raise FileNotFoundError(f"Could not find {pyproject_toml_path}")
