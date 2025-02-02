@@ -177,7 +177,20 @@ def compile_ignores(repo_root: Path, required_exclusions: list[str] | None = Non
 
 
 def exclude(repo_root: str = os.getcwd(), required_exclusions: list[str] | None = None) -> None:
-    """Reconfigure pyproject.toml to exclude all files where pyright throws any errors."""
+    """Reconfigure pyproject.toml to exclude all files where pyright throws any errors.
+
+    Args:
+        repo_root: The path to the repository root. Normally you call this function from the root of the repository, so
+            the default value should work.
+        required_exclusions: A list of file path patterns that will ignored for purposes of generating the list of files
+            to ignore. By default, the we already ignore the following directories, which should be ignored by
+            pyright more generally:
+                .venv
+                .tox
+                docs
+                dist
+                build
+    """
     repo_root_path = Path(repo_root)
     pyproject_toml_path = repo_root_path / PYPROJECT_FILE
     if not pyproject_toml_path.exists():
